@@ -132,7 +132,7 @@ class RRT:
         if self.nearest_node is not None:
             for child in self.nearest_node.children:
                 if ((child.x - goal_node.x) ** 2 + (
-                        child.y - goal_node.y) ** 2) <= 0.37:  # check if goal is reached within 0.37m
+                        child.y - goal_node.y) ** 2) <= 0.33:  # check if goal is reached within 0.37m
                     self.GOAL.parent = child
                     child.children.append(self.GOAL)
                     return True
