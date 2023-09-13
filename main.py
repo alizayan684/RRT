@@ -28,8 +28,8 @@ def read_obstacles():
 
 # make sample point function for RRT ###################################################################################
 def sample_nodes():
-    samples = PriorityQueue()
-    for samp_num in range(8):
+    samples = PriorityQueue()  # initialize priority queue
+    for samp_num in range(8):  # generate 8 random points
         x = random.uniform(-0.6, 0.6)
         y = random.uniform(-0.6, 0.6)
         point = [round(x, 2), round(y, 2)]
@@ -38,7 +38,7 @@ def sample_nodes():
 
 
 # make unit vector function for RRT ####################################################################################
-def make_unit_vector(start_Node, end_Point):
+def make_unit_vector(start_Node, end_Point):  # make unit vector for steering and obstacle checking
     if start_Node.x == end_Point[0] and start_Node.y == end_Point[1]:
         return [0, 0]
     vector = [end_Point[0] - start_Node.x, end_Point[1] - start_Node.y]
@@ -55,9 +55,10 @@ class Node:
         self.y = y
         self.parent = None
         self.children = []
+        # calculate heuristic for priority queue (distance to goal) for sampling
         self.heuristic = numpy.sqrt((x - goal[0]) ** 2 + (y - goal[1]) ** 2)
 
-    def __lt__(self, other):
+    def __lt__(self, other):  # less than function for priority queue to compare sample points
         return self.heuristic < other.heuristic
 
 
@@ -82,17 +83,17 @@ class RRT:
             new_node.parent = self.nearest_node
             self.nearest_node.children.append(new_node)
 
-    def steer_towards(self, start_node, end_point):
+    def steer_towards(self, start_node, end_point):  # steer towards random point
         vector = make_unit_vector(start_node, end_point)
         vector = [vector[0] * self.step_size, vector[1] * self.step_size]
         new_Point = [start_node.x + vector[0], start_node.y + vector[1]]
-        if new_Point[0] > 0.5:  # check if new point is out of bounds
+        if new_Point[0] > 0.5:  # check if new point x is out of bounds
             new_Point[0] = 0.5
 
         if new_Point[0] < -0.5:
             new_Point[0] = -0.5
 
-        if new_Point[1] > 0.5:
+        if new_Point[1] > 0.5:  # check if new point y is out of bounds
             new_Point[1] = 0.5
 
         if new_Point[1] < -0.5:
@@ -100,19 +101,19 @@ class RRT:
 
         return new_Point
 
-    def obstacle_found(self, nearest_Node, new_Point):
-        unit_vector = make_unit_vector(nearest_Node, new_Point)
+    def obstacle_found(self, nearest_Node, new_Point):  # check if obstacle is in path
+        unit_vector = make_unit_vector(nearest_Node, new_Point)  # make unit vector
         test_point = [nearest_Node.x, nearest_Node.y]
         while self.distance(test_point, new_Point) > 0.05:  # check if obstacle is in path
-            test_point[0] += unit_vector[0] * 0.05
-            test_point[1] += unit_vector[1] * 0.05
+            test_point[0] += unit_vector[0] * 0.05  # check every 0.05m
+            test_point[1] += unit_vector[1] * 0.05  # check every 0.05m
             if self.is_point_in_obstacle(test_point):
                 return True
         if self.is_point_in_obstacle(new_Point):
             return True
         return False
 
-    def find_nearest_node(self, root, point):
+    def find_nearest_node(self, root, point):  # find nearest node to random point
         if not root:
             return
         root_point = [root.x, root.y]
@@ -125,10 +126,10 @@ class RRT:
                 self.find_nearest_node(child, point)
         return self.nearest_node
 
-    def distance(self, point1, point2):
+    def distance(self, point1, point2):  # calculate distance between two points
         return numpy.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
 
-    def goal_reached(self, goal_node):
+    def goal_reached(self, goal_node):  # check if goal is reached
         if self.nearest_node is not None:
             for child in self.nearest_node.children:
                 if ((child.x - goal_node.x) ** 2 + (
@@ -138,10 +139,10 @@ class RRT:
                     return True
         return False
 
-    def reset_nearest_distance(self):
+    def reset_nearest_distance(self):  # reset nearest distance to a large number
         self.nearest_distance = 10000
 
-    def is_point_in_obstacle(self, point):
+    def is_point_in_obstacle(self, point):  # check if point is in obstacle
         for obstacle in self.grid:
             if ((point[0] - float(obstacle[0])) ** 2 + (point[1] - float(obstacle[1])) ** 2) <= float(
                     obstacle[2]) ** 2:  # check if point is in obstacle
@@ -163,7 +164,7 @@ if __name__ == '__main__':
     counter = 8  # counter for random nodes
     for i in range(ITERATIONS):
         counter -= 1
-        if counter == 0:
+        if counter == 0:  # get new random nodes every 8 iterations
             counter = 8
             random_nodes = sample_nodes()
         rand_node = random_nodes.get()
@@ -180,17 +181,21 @@ if __name__ == '__main__':
         rrt.reset_nearest_distance()
     # end of RRT algorithm #########################################
     print(path_points)
+    # write to nodes file ##########################################
     with open("BEST/nodes.csv", 'w') as n:
         writer = csv.writer(n)
         for i in range(len(path_points)):
             writer.writerow([i + 1, path_points[i][0], path_points[i][1]])
+    # write to path file ##########################################
     li = []
     for i in range(len(path_points)):
         li.append(i + 1)
     with open("BEST/path.csv", 'w') as p:
         writer = csv.writer(p)
         writer.writerow(li)
+    # write to edges file ##########################################
     with open("BEST/edges.csv", "w") as e:
         writer = csv.writer(e)
         for i in range(len(path_points) - 1):
             writer.writerow([i + 1, i + 2, 0.3])
+    # END OF PROGRAM ###################################################################################################
