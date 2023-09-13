@@ -29,7 +29,7 @@ def read_obstacles():
 # make sample point function for RRT ###################################################################################
 def sample_nodes():
     samples = PriorityQueue()
-    for n in range(8):
+    for samp_num in range(8):
         x = random.uniform(-0.6, 0.6)
         y = random.uniform(-0.6, 0.6)
         point = [round(x, 2), round(y, 2)]
@@ -86,7 +86,7 @@ class RRT:
         vector = make_unit_vector(start_node, end_point)
         vector = [vector[0] * self.step_size, vector[1] * self.step_size]
         new_Point = [start_node.x + vector[0], start_node.y + vector[1]]
-        if new_Point[0] > 0.5:
+        if new_Point[0] > 0.5:  # check if new point is out of bounds
             new_Point[0] = 0.5
 
         if new_Point[0] < -0.5:
@@ -103,7 +103,7 @@ class RRT:
     def obstacle_found(self, nearest_Node, new_Point):
         unit_vector = make_unit_vector(nearest_Node, new_Point)
         test_point = [nearest_Node.x, nearest_Node.y]
-        while self.distance(test_point, new_Point) > 0.05:
+        while self.distance(test_point, new_Point) > 0.05:  # check if obstacle is in path
             test_point[0] += unit_vector[0] * 0.05
             test_point[1] += unit_vector[1] * 0.05
             if self.is_point_in_obstacle(test_point):
@@ -131,7 +131,8 @@ class RRT:
     def goal_reached(self, goal_node):
         if self.nearest_node is not None:
             for child in self.nearest_node.children:
-                if ((child.x - goal_node.x) ** 2 + (child.y - goal_node.y) ** 2) <= 0.37:
+                if ((child.x - goal_node.x) ** 2 + (
+                        child.y - goal_node.y) ** 2) <= 0.37:  # check if goal is reached within 0.37m
                     self.GOAL.parent = child
                     child.children.append(self.GOAL)
                     return True
@@ -142,23 +143,25 @@ class RRT:
 
     def is_point_in_obstacle(self, point):
         for obstacle in self.grid:
-            if ((point[0] - float(obstacle[0])) ** 2 + (point[1] - float(obstacle[1])) ** 2) <= float(obstacle[2]) ** 2:
+            if ((point[0] - float(obstacle[0])) ** 2 + (point[1] - float(obstacle[1])) ** 2) <= float(
+                    obstacle[2]) ** 2:  # check if point is in obstacle
                 return True
         return False
 
 
 if __name__ == '__main__':
+    # inputs ##################################################
     path_points = []
     start = [-0.5, -0.5]
     goal = [0.5, 0.5]
     ITERATIONS = 1000000
     grid_obstacles = read_obstacles()
     step_size = 0.3
-    rrt = RRT(start, goal, ITERATIONS, grid_obstacles, step_size)
-    random_nodes = sample_nodes()
-    counter = 8
+    ###########################################################
+    rrt = RRT(start, goal, ITERATIONS, grid_obstacles, step_size)  # initialize RRT
+    random_nodes = sample_nodes()  # initialize random nodes
+    counter = 8  # counter for random nodes
     for i in range(ITERATIONS):
-        random_nodes = sample_nodes()
         counter -= 1
         if counter == 0:
             counter = 8
@@ -175,18 +178,19 @@ if __name__ == '__main__':
             path_points = trace_path(rrt.GOAL)
             break
         rrt.reset_nearest_distance()
+    # end of RRT algorithm #########################################
     print(path_points)
-    with open("nodes.csv" , 'w') as n:
+    with open("BEST/nodes.csv", 'w') as n:
         writer = csv.writer(n)
         for i in range(len(path_points)):
-            writer.writerow([i+1,path_points[i][0],path_points[i][1]])
-    l = []
-    for i in range(len(path_points)) :
-        l.append(i+1)
-    with open ("path.csv",'w') as p:
+            writer.writerow([i + 1, path_points[i][0], path_points[i][1]])
+    li = []
+    for i in range(len(path_points)):
+        li.append(i + 1)
+    with open("BEST/path.csv", 'w') as p:
         writer = csv.writer(p)
-        writer.writerow(l)
-    with open("edges.csv", "w") as e:
+        writer.writerow(li)
+    with open("BEST/edges.csv", "w") as e:
         writer = csv.writer(e)
-        for i in range(len(path_points)-1):
-            writer.writerow([i+1,i+2,0.3])
+        for i in range(len(path_points) - 1):
+            writer.writerow([i + 1, i + 2, 0.3])
