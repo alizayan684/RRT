@@ -178,4 +178,15 @@ if __name__ == '__main__':
     print(path_points)
     with open("nodes.csv" , 'w') as n:
         writer = csv.writer(n)
-        writer.writerows(path_points)
+        for i in range(len(path_points)):
+            writer.writerow([i+1,path_points[i][0],path_points[i][1]])
+    l = []
+    for i in range(len(path_points)) :
+        l.append(i+1)
+    with open ("path.csv",'w') as p:
+        writer = csv.writer(p)
+        writer.writerow(l)
+    with open("edges.csv", "w") as e:
+        writer = csv.writer(e)
+        for i in range(len(path_points)-1):
+            writer.writerow([i+1,i+2,0.3])
