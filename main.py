@@ -19,7 +19,7 @@ def trace_path(goal_node):
 
 # Read in obstacles from csv file and store in list ####################################################################
 def read_obstacles():
-    with open('obstacles.csv') as csvfile:
+    with open('BEST/obstacles.csv') as csvfile:
         reader = csv.reader(csvfile)
         obstacles = list(reader)
     csvfile.close()
