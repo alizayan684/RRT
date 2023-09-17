@@ -1,5 +1,5 @@
 # RRT-Modified:
-#### A modified RRT algorithm uses a Priority Queue sampling approach to enhance random sampling.
+#### An implementation and simulation of RRT algorithm uses a Priority Queue sampling approach to enhance random sampling.
 <hr>
 <br>
 
