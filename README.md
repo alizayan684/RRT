@@ -20,4 +20,3 @@
 ## Results:
 #### Results are ( Nodes.csv, Path.csv, Edges.csv) and input is Obstacles.csv.
 #### You can view them in BEST folder.
-#### Output folder is the RRT standard output
