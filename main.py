@@ -91,8 +91,6 @@ class Node:
         self.x = x
         self.y = y
         self.parent = None
-        self.children = []
-        self.heuristic = ((GRAPH_MAX - x) ** 2 + (GRAPH_MAX - y) ** 2) ** 0.5  # euclidean distance to goal
 
 
 # defines a class representing an edge between two nodes of the graph
@@ -212,7 +210,6 @@ if __name__ == '__main__':
             # create a new node and add it to the tree
             new_node = Node(new_point[0], new_point[1])
             new_node.parent = closest_node
-            closest_node.children.append(new_node)
             rrt.add_node(new_node)
 
             # create a new edge and add it to the tree
