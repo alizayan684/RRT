@@ -1,7 +1,6 @@
 import csv
 import math
 import random
-from queue import PriorityQueue
 
 import numpy
 
@@ -75,8 +74,8 @@ def no_intersection(x1, y1, x2, y2, cx, cy, circle_radius):
     # Compute directional vector of line
     dp = p2 - p1
     magnitude = numpy.linalg.norm(dp)
-    unit_vector = dp / magnitude
-    for i in range(21):  # 20 points between p1 and p2
+    unit_vector = numpy.array([dp[0] / magnitude, dp[1] / magnitude])
+    for i in range(1, 21):  # 20 points between p1 and p2
         new_point = p1 + unit_vector * (i / 20) * magnitude
         if ((new_point[0] - cx) ** 2 + (new_point[1] - cy) ** 2) ** 0.5 <= (
                 circle_radius):  # if the distance between the point and the circle center is less than the radius
@@ -94,9 +93,6 @@ class Node:
         self.parent = None
         self.children = []
         self.heuristic = ((GRAPH_MAX - x) ** 2 + (GRAPH_MAX - y) ** 2) ** 0.5  # euclidean distance to goal
-
-    def __lt__(self, other):  # used for the priority queue
-        return self.heuristic < other.heuristic
 
 
 # defines a class representing an edge between two nodes of the graph
@@ -133,14 +129,9 @@ for i in range(-50, 51):  # generate a list of 10,000 random points to sample fr
         random_points.append([i / 100, j / 100])
 
 
-def get_sample_point():
-    qsamples = PriorityQueue()  # use a priority queue to get the closest point to the goal
-    for i in range(10):
-        point = random.choice(random_points)
-        sample_node = Node(point[0], point[1])
-        qsamples.put(sample_node)
-    chosen_node = qsamples.get()
-    return [chosen_node.x, chosen_node.y]
+def get_sample():
+    point = random.choice(random_points)
+    return point
 
 
 def check_motion_is_collision_free(obstacle_list, start_x, start_y, end_x, end_y):
@@ -200,12 +191,13 @@ if __name__ == '__main__':
     goal_reached = False
     loop_count = 0
     while not goal_reached and loop_count < MAX_LOOP_COUNT:
-        print(f"Loop {loop_count}")
+        print(loop_count)
         # get a random sample point
         if loop_count % 10 == 0:  # chose the goal as the sample point every 10 iterations to bias the search
             sample_point = [0.5, 0.5]
+
         else:
-            sample_point = get_sample_point()
+            sample_point = get_sample()
 
         # find the closest node in the tree to the sample point
         closest_node = get_closest_tree_node(rrt, sample_point[0], sample_point[1])
@@ -214,6 +206,8 @@ if __name__ == '__main__':
         new_point = local_planner(closest_node.x, closest_node.y, sample_point[0], sample_point[1], SAMPLE_STEP_SIZE)
 
         # check if the new point is collision free
+        if closest_node.x == new_point[0] and closest_node.y == new_point[1]:
+            continue
         if check_motion_is_collision_free(obstacles, closest_node.x, closest_node.y, new_point[0], new_point[1]):
             # create a new node and add it to the tree
             new_node = Node(new_point[0], new_point[1])
