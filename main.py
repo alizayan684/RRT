@@ -76,10 +76,10 @@ def no_intersection(x1, y1, x2, y2, cx, cy, circle_radius):
     dp = p2 - p1
     magnitude = numpy.linalg.norm(dp)
     unit_vector = dp / magnitude
-    for i in range(21):
+    for i in range(21): # 20 points between p1 and p2
         new_point = p1 + unit_vector * (i / 20) * magnitude
         if ((new_point[0] - cx) ** 2 + (new_point[1] - cy) ** 2) ** 0.5 <= (
-                circle_radius):
+                circle_radius): # if the distance between the point and the circle center is less than the radius
             return False
 
     return True
@@ -93,9 +93,9 @@ class Node:
         self.y = y
         self.parent = None
         self.children = []
-        self.heuristic = ((GRAPH_MAX - x) ** 2 + (GRAPH_MAX - y) ** 2) ** 0.5
+        self.heuristic = ((GRAPH_MAX - x) ** 2 + (GRAPH_MAX - y) ** 2) ** 0.5 # euclidean distance to goal
 
-    def __lt__(self, other):
+    def __lt__(self, other): # used for the priority queue
         return self.heuristic < other.heuristic
 
 
@@ -110,7 +110,7 @@ class Edge:
 # RRT class ############################################################################################################
 class RRT:
     def __init__(self):
-        self.node_count = 1
+        self.node_count = 1 # the number of nodes in the tree used to assign unique node ids
         self.nodes = []
         self.edges = []
 
@@ -118,7 +118,7 @@ class RRT:
     def add_node(self, node):
         node.id = self.node_count
         self.nodes.append(node)
-        self.node_count = self.node_count + 1
+        self.node_count = self.node_count + 1 # increment the node count used for the next node id
         return node.id
 
     def add_edge(self, edge):
@@ -127,13 +127,13 @@ class RRT:
 
 ########################################################################################################################
 random_points = []
-for i in range(-50, 51):
+for i in range(-50, 51): # generate a list of 10,000 random points to sample from representing the graph
     for j in range(-50, 51):
         random_points.append([i / 100, j / 100])
 
 
 def get_sample_point():
-    qsamples = PriorityQueue()
+    qsamples = PriorityQueue() # use a priority queue to get the closest point to the goal
     for i in range(10):
         point = random.choice(random_points)
         sample_node = Node(point[0], point[1])
@@ -169,11 +169,10 @@ def local_planner(start_x, start_y, target_x, target_y, step_size):
     target = numpy.array([target_x, target_y])
     direction = target - start
 
-    # if the movement is greater than step_size, reduce it
     magnitude = numpy.linalg.norm(direction)
-    if magnitude > step_size:
+    if magnitude > step_size: # if the distance between the start and target is greater than the step size
         direction = direction / magnitude
-        direction = direction * step_size
+        direction = direction * step_size # scale the direction vector to the step size
 
     # return the adjusted target point
     new = start + direction
@@ -198,8 +197,9 @@ if __name__ == '__main__':
     goal_reached = False
     loop_count = 0
     while not goal_reached and loop_count < MAX_LOOP_COUNT:
+        print(f"Loop {loop_count}")
         # get a random sample point
-        if loop_count % 10 == 0:
+        if loop_count % 10 == 0: # chose the goal as the sample point every 10 iterations to bias the search
             sample_point = [0.5, 0.5]
         else:
             sample_point = get_sample_point()
@@ -221,8 +221,6 @@ if __name__ == '__main__':
             # create a new edge and add it to the tree
             new_edge = Edge(closest_node.id, new_node.id)
             rrt.add_edge(new_edge)
-            print(f"Added node {new_node.id} with parent {closest_node.id} and edge cost {new_edge.cost}")
-
             # check if the goal has been reached
             if ((new_node.x - goal_node.x) ** 2 + (new_node.y - goal_node.y) ** 2) ** .5 < MIN_GOAL_DISTANCE:
                 goal_reached = True
