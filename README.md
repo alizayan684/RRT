@@ -1,4 +1,4 @@
-# RRT-Modified:
+# RRT:
 #### An implementation and simulation of RRT algorithm using CopelliaSim.
 <hr>
 <br>
