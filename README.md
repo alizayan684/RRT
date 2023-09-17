@@ -20,3 +20,5 @@
 ## Results:
 #### Results are ( Nodes.csv, Path.csv, Edges.csv) and input is Obstacles.csv.
 #### You can view them in BEST folder.
+#### Simulation is done in CoppliaSim Edu.
+
