@@ -6,7 +6,7 @@
 
 
 ### Here is the algorithm result before modification:
-![](https://github.com/alizayan684/RRT-Modified/blob/main/Screenshot%202023-09-13%20010233.png)
+![](https://github.com/alizayan684/RRT-Modified/blob/main/Screenshot%202023-09-17%20174405.png)
 <br>
 <br>
 <hr>
