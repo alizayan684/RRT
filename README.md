@@ -14,7 +14,7 @@
 
 
 ### And here is the algorithm result using the Priority Queue sampling approach:
-![](https://github.com/alizayan684/RRT-Modified/blob/main/Screenshot%202023-09-13%20005839.png)
+![](https://github.com/alizayan684/RRT-Modified/blob/main/Screenshot%202023-09-17%20180751.png)
 
 
 ## Results:
