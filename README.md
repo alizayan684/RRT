@@ -1,5 +1,5 @@
 # RRT:
-#### An implementation and simulation of RRT algorithm using CopelliaSim.
+#### Developed an implementation and simulation of the Rapidly-exploring Random Tree (RRT) algorithm using Python and CopelliaSim.
 <hr>
 <br>
 
