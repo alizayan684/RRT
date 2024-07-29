@@ -1,5 +1,6 @@
 # RRT:
 #### Developed an implementation and simulation of the Rapidly-exploring Random Tree (RRT) algorithm using Python and CopelliaSim.
+#### The program takes 1 file (Obstacles.csv) as input and produces 3 files ( Nodes.csv, Path.csv, Edges.csv) as output.
 <hr>
 <br>
 
@@ -12,7 +13,7 @@
 <hr>
 
 ## Results:
-#### Results are ( Nodes.csv, Path.csv, Edges.csv) and input is Obstacles.csv.
+#### Results are ( Nodes.csv, Path.csv, Edges.csv) and the input is Obstacles.csv.
 #### You can view them in BEST folder.
 #### Simulation is done in CoppliaSim Edu.
 
